@@ -1,0 +1,71 @@
+{
+    "features": {
+        "Review": {
+            "encoder": {
+                "module": "MLMEncoder",
+                "args": {
+                    "output_type": "$dtype_dict[$target]",
+                    "embed_mode": "False"
+                }
+            }
+        }
+    },
+    "outputs": {
+        "Rating": {
+            "data_dtype": "categorical",
+            "encoder": {
+                "module": "Categorical.OneHotEncoder",
+                "args": {
+                    "is_target": "True"
+                }
+            },
+            "models": [
+                {
+                    "module": "UnitClassifier",
+                    "args": {
+                        "target_encoder": "$encoders[self.target]",
+                        "stop_after": "$problem_definition.seconds_per_model"
+                    }
+                }
+            ],
+            "ensemble": {
+                "module": "BestOf",
+                "args": {
+                    "accuracy_functions": "$accuracy_functions"
+                }
+            }
+        }
+    },
+    "problem_definition": {
+        "target": "Rating",
+        "nfolds": 30,
+        "pct_invalid": 1,
+        "unbias_target": false,
+        "seconds_per_model": 5263,
+        "seconds_per_encoder": 14134,
+        "time_aim": 8625.64385143053,
+        "target_weights": null,
+        "positive_domain": false,
+        "fixed_confidence": null,
+        "timeseries_settings": {
+            "is_timeseries": false,
+            "order_by": null,
+            "window": null,
+            "group_by": null,
+            "use_previous_target": false,
+            "nr_predictions": null,
+            "historical_columns": null,
+            "target_type": ""
+        },
+        "anomaly_detection": true,
+        "anomaly_error_rate": null,
+        "anomaly_cooldown": 1,
+        "ignore_features": [],
+        "fit_on_validation": true,
+        "strict_mode": true
+    },
+    "identifiers": {},
+    "accuracy_functions": [
+        "balanced_accuracy_score"
+    ]
+}
